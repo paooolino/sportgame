@@ -1,0 +1,13 @@
+{
+    "name": "paooolino/sportgame",
+    "authors": [
+        {
+            "name": "paooolino",
+            "email": "paooolino@gmail.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.8",
+        "gabordemooij/redbean": "^4.3"
+    }
+}

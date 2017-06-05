@@ -1,0 +1,25 @@
+{
+  "name": "sportgame",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+		"start": "node start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paooolino/sportgame.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paooolino/sportgame/issues"
+  },
+  "homepage": "https://github.com/paooolino/sportgame#readme",
+  "devDependencies": {
+    "ftp-deploy": "^1.2.1",
+    "opn": "^5.0.0"
+  }
+}
