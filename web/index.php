@@ -4,12 +4,20 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 require '../vendor/autoload.php';
 
-$app = new \Slim\App;
+class_alias('\RedBeanPHP\R','\R');
+R::setup('mysql:host=localhost;dbname=sportgame', 'root', 'root');
+				
+$config = [];
+$config['displayErrorDetails'] = true;
+$config['addContentLengthHeader'] = false;
+
+$app = new \Slim\App(["settings" => $config]);
+$container = $app->getContainer();
 $container['view'] = new \Slim\Views\PhpRenderer("./templates/");
 
 $app->get('/', function (Request $request, Response $response) {
 	$widgets = ["login", "register", "standings", "events"];
-	$response = $this->view->render($response, "layout.phtml", ["widgets" => $widgets]);
+	$response = $this->view->render($response, "./layout.phtml", ["widgets" => $widgets]);
 	return $response;
 });
 
