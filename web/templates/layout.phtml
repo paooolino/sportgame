@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+	<header>
+		header
+	</header>
+	<section>
+		<h1><?php echo $title; ?></h1>
+		<?php echo $description; ?>
+	</section>
+	<?php 
+	foreach($widgets as $widget) { 
+		$this->view->render($response, "./widgets/" . $widget .".phtml", []);
+	}
+	?>
+	<footer>
+		footer
+	</footer>
+</body>
+</html>

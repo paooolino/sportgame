@@ -1,0 +1,7 @@
+<?php foreach ($items as $item) { ?>
+	<div class="abstract_item">
+		<div class="abstract_img"><a href="<?php echo $item["href"]; ?>"><img src="<?php echo $item["img"]; ?>"></a></div>
+		<div class="abstract_title"><a href="<?php echo $item["href"]; ?>"><?php echo $item["title"]; ?></a></div>
+		<div class="abstract_desc"><?php echo $item["desc"]; ?></div>
+	</div>
+<?php } ?>
