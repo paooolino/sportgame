@@ -7,7 +7,7 @@ require '../vendor/autoload.php';
 // db connection
 class_alias('\RedBeanPHP\R','\R');
 R::setup('mysql:host=localhost;dbname=sportgame', 'root', 'root');
-				
+			
 // slim application
 $config = [];
 // Slim Framework configuration
@@ -24,7 +24,7 @@ $container = $app->getContainer();
 $container['view'] = new \Slim\Views\PhpRenderer("./templates/");
 
 // Sportgame application
-$sg = new \Paooolino\Sportgame();
+$container['sg'] = new \Paooolino\Sportgame();
 
 // routes
 $app->get('/', function (Request $request, Response $response) {
@@ -60,18 +60,14 @@ $app->get('/player/{player_id}', function (Request $request, Response $response)
 $app->get('/tools/db-setup', function (Request $request, Response $response) {
 	$settings = $this->get("settings");
 	if ($settings["development_mode"]) {
-		$sg->initDbTable("../dbdata/leagues.csv");
+		$this->sg->initDbTableFromCsv("../dbdata/", "leagues");
+		$this->sg->initDbTableFromCsv("../dbdata/", "teams");
+		$this->sg->initDbTableFromCsv("../dbdata/", "names");
+		$this->sg->initDbTableFromCsv("../dbdata/", "surnames");
+		$this->sg->initDbTableFromCsv("../dbdata/", "countries");
 	} else {
 		// TO DO send error
 	}
-	/*
-	$file = fopen('myCSVFile.csv', 'r');
-	while (($line = fgetcsv($file)) !== FALSE) {
-		//$line is an array of the csv elements
-		print_r($line);
-	}
-	fclose($file);
-	*/
 	return $response;
 });
 
