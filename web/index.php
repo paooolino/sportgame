@@ -60,11 +60,14 @@ $app->get('/player/{player_id}', function (Request $request, Response $response)
 $app->get('/tools/db-setup', function (Request $request, Response $response) {
 	$settings = $this->get("settings");
 	if ($settings["development_mode"]) {
+		R::nuke();
 		$this->sg->initDbTableFromCsv("../dbdata/", "leagues");
 		$this->sg->initDbTableFromCsv("../dbdata/", "teams");
 		$this->sg->initDbTableFromCsv("../dbdata/", "names");
 		$this->sg->initDbTableFromCsv("../dbdata/", "surnames");
 		$this->sg->initDbTableFromCsv("../dbdata/", "countries");
+		$this->sg->initPlayers();
+		$this->sg->initCalendar();
 	} else {
 		// TO DO send error
 	}
