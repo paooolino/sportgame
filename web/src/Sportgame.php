@@ -82,6 +82,39 @@ class Sportgame {
 		}
 	}
 	
+	public function getOption($option_name) {
+		$option = \R::findOne('options', ' WHERE option_name = ?', [$option_name]);
+		return $option->option_value;
+	}
+	
+	public function setOption($option_name, $option_value) {
+		$option = \R::findOne('options', ' WHERE option_name = ?', [$option_name]);
+		$option->option_value = $option_value;
+		\R::store($option);
+	}
+	
+	public function passTurn($n) {
+		$current_turn =  getOption("current_turn");
+		setOption("current_turn", $current_turn + $n);
+	}
+	
+	private function updatePlayers($n) {
+		$players = \R::findAll("players");
+		foreach ($players as $player) {
+			$var = rand(0,2) - 1;
+			if ($var != 0) {
+				$player->quality = $player->quality + $var;
+				\R::store($player);
+				
+				$variation \R::dispense("playervars");
+				$variation->player = $player;
+				$variation->value = $var;
+				$variation->turn = $current_turn;
+				\R::store($variation);
+			}
+		}
+	}
+	
 	private function getRandomName($country) {
 		$name = \R::findOne('names', ' ORDER BY RAND() LIMIT 1');
 		return $name->name;
