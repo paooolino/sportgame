@@ -6,7 +6,7 @@
   "scripts": {
 		"start": "node start",
 		"db-setup": "node db-setup",
-    "test": "phpunit tests"
+    "test": "phpunit --bootstrap vendor/autoload.php tests"
   },
   "repository": {
     "type": "git",
