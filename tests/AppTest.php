@@ -1,37 +1,37 @@
 <?php
+// vendor/autoload is loaded by the phpunit command line
+//	--bootstrap
+
+use PHPUnit\Framework\TestCase;
 use \Paooolino\Sportgame;
 
-//class_alias('\RedBeanPHP\R','\R');
-//R::setup($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD']);
+class_alias('\RedBeanPHP\R','\R');
+R::setup('mysql:host=localhost;dbname=sportgame_test', 'root', 'root');
 
-class AppTest extends PHPUnit_Extensions_Database_TestCase {
+class AppTest extends TestCase {
 	
 	protected function setUp() {
-		//R::nuke();
+		$sg = new Sportgame();
+		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'options');
+	}
+	
+	protected function tearDown() {
+		R::nuke();
 	}
 	
 	public function testPassTurn() {
 		$sg = new Sportgame();
-		$sg->passTurn();
+		
+		$turnBefore = $sg->getOption("current_turn");
+		$sg->passTurn(1);
+		$turnAfter = $sg->getOption("current_turn");
+		
+		$this->assertEquals(0, $turnBefore, "initial turn value");
+		$this->assertEquals(1, $turnAfter, "turn value after 1 pass");
 	}
 	
 	public function testUpdatePlayer() {
-	}
-	
-	/**
-	 * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
-	 */
-	public function getConnection()	{
-		$pdo = new PDO($GLOBALS['DB_DSN'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASSWD']);
-		return $this->createDefaultDBConnection($pdo, $GLOBALS['DB_DBNAME']);
+		//
 	}
 
-	/**
-	 * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-	 */
-	public function getDataSet() {
-		$dataSet = new PHPUnit_Extensions_Database_DataSet_CsvDataSet();
-		$dataSet->addTable('teams', dirname(__FILE__) . "/dbdata/teams.csv");
-		return $dataSet;
-	}
 }

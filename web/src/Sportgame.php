@@ -94,8 +94,8 @@ class Sportgame {
 	}
 	
 	public function passTurn($n) {
-		$current_turn =  getOption("current_turn");
-		setOption("current_turn", $current_turn + $n);
+		$current_turn = $this->getOption("current_turn");
+		$this->setOption("current_turn", $current_turn + $n);
 	}
 	
 	private function updatePlayers($n) {
@@ -106,7 +106,7 @@ class Sportgame {
 				$player->quality = $player->quality + $var;
 				\R::store($player);
 				
-				$variation \R::dispense("playervars");
+				$variation = \R::dispense("playervars");
 				$variation->player = $player;
 				$variation->value = $var;
 				$variation->turn = $current_turn;
