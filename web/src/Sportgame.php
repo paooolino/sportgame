@@ -98,7 +98,7 @@ class Sportgame {
 		$this->setOption("current_turn", $current_turn + $n);
 	}
 	
-	private function updatePlayers($n) {
+	public function updatePlayers() {
 		$players = \R::findAll("players");
 		foreach ($players as $player) {
 			$var = rand(0,2) - 1;
@@ -106,10 +106,10 @@ class Sportgame {
 				$player->quality = $player->quality + $var;
 				\R::store($player);
 				
-				$variation = \R::dispense("playervars");
+				$variation = \R::dispense("playervariations");
 				$variation->player = $player;
 				$variation->value = $var;
-				$variation->turn = $current_turn;
+				$variation->turn = $this->getOption("current_turn");
 				\R::store($variation);
 			}
 		}
