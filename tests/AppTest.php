@@ -10,34 +10,37 @@ R::setup('mysql:host=localhost;dbname=sportgame_test', 'root', 'root');
 
 class AppTest extends TestCase {
 	
+	/**
+	 *	inizializza un database con 2 leagues, 20 teams
+	 */
 	protected function setUp() {
 		R::nuke();
 		$sg = new Sportgame();
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'options');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'names');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'surnames');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'leagues');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'teams');
+		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'option');
+		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'name');
+		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'surname');
+		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'league');
+		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'team');
 	}
 	
 	protected function tearDown() {
 		R::nuke();
 	}
-	
+
+	/**
+	 *	
+	 */
 	public function testUpdatePlayers() {
 		$sg = new SportGame();
 		$sg->initPlayers();
 		$sg->updatePlayers();
 		
-		$players = R::findAll("players");
-		$variation = R::findOne("playervariations");
-		echo $variation;echo "---";
+		$players = R::findAll("player");
+		$variation = R::findOne("playervariation");
+
 		if ($variation) {
 			$var = $variation->value;
-			$player = $variation->fetchAs('players')->player->id;
-			
-			echo $player;
-			print_r($player);die();
+			$player = $variation->player;
 			$expected = $players[$player->id]->quality + $var;
 			$this->assertEquals($expected, $player->quality, "player quality has been updated and variation recorded");
 		}
@@ -46,8 +49,8 @@ class AppTest extends TestCase {
 	public function testInitCalendar() {
 		$sg = new SportGame();
 		$sg->initCalendar();
-		$leagues = R::findAll('leagues');
-		$matches = R::findAll('matches');
+		$leagues = R::findAll('league');
+		$matches = R::findAll('match');
 		$matches_per_league = 5 * 9;
 		$this->assertEquals(count($leagues) * $matches_per_league, count($matches), "every league has 45 matches");
 	}
@@ -66,9 +69,9 @@ class AppTest extends TestCase {
 	public function testInitPlayers() {
 		$sg = new SportGame();
 		
-		$teams = R::findAll('teams');
+		$teams = R::findAll('team');
 		$sg->initPlayers();
-		$players = R::findAll('players');
+		$players = R::findAll('player');
 		
 		$this->assertEquals(25 * count($teams), count($players), "every team has 25 players");
 	}

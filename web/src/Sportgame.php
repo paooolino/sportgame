@@ -29,11 +29,11 @@ class Sportgame {
 	}
 	
 	public function initPlayers() {
-		$teams = \R::findAll('teams');
+		$teams = \R::findAll('team');
 		foreach ($teams as $team) {
 			$roles = "PPPDDDDDDDDMMMMMMMAAAAAAA";
 			for ($i = 0; $i < strlen($roles); $i++) {
-				$player = \R::dispense("players");
+				$player = \R::dispense("player");
 				$player->role = $roles[$i];
 				$player->country = "ITA";
 				$player->name = $this->getRandomName("ITA");
@@ -60,13 +60,13 @@ class Sportgame {
 			[[5,10],[6,4],[7,3],[8,2],[9,1]]
 		];
 		
-		$leagues = \R::findAll('leagues');
+		$leagues = \R::findAll('league');
 		foreach ($leagues as $league) {
-			$teams = \R::find('teams', ' WHERE livello = ?', [$league->livello]); 
+			$teams = \R::find('team', ' WHERE livello = ?', [$league->livello]); 
 			$teams = array_values($teams);
 			for ($i = 0; $i < count($fixtures); $i++) {
 				for ($j = 0; $j < count($fixtures[$i]); $j++) {
-					$match = \R::dispense("matches");
+					$match = \R::dispense("match");
 					$match->round = $i;
 					$match->league = $league;
 					$match->team1 = $teams[$fixtures[$i][$j][0]-1];
@@ -83,12 +83,12 @@ class Sportgame {
 	}
 	
 	public function getOption($option_name) {
-		$option = \R::findOne('options', ' WHERE option_name = ?', [$option_name]);
+		$option = \R::findOne('option', ' WHERE option_name = ?', [$option_name]);
 		return $option->option_value;
 	}
 	
 	public function setOption($option_name, $option_value) {
-		$option = \R::findOne('options', ' WHERE option_name = ?', [$option_name]);
+		$option = \R::findOne('option', ' WHERE option_name = ?', [$option_name]);
 		$option->option_value = $option_value;
 		\R::store($option);
 	}
@@ -99,14 +99,14 @@ class Sportgame {
 	}
 	
 	public function updatePlayers() {
-		$players = \R::findAll("players");
+		$players = \R::findAll("player");
 		foreach ($players as $player) {
 			$var = rand(0,2) - 1;
 			if ($var != 0) {
 				$player->quality = $player->quality + $var;
 				\R::store($player);
 				
-				$variation = \R::dispense("playervariations");
+				$variation = \R::dispense("playervariation");
 				$variation->player = $player;
 				$variation->value = $var;
 				$variation->turn = $this->getOption("current_turn");
@@ -116,12 +116,12 @@ class Sportgame {
 	}
 	
 	private function getRandomName($country) {
-		$name = \R::findOne('names', ' ORDER BY RAND() LIMIT 1');
+		$name = \R::findOne('name', ' ORDER BY RAND() LIMIT 1');
 		return $name->name;
 	}
 	
 	private function getRandomSurname($country) {
-		$surname = \R::findOne('surnames', ' ORDER BY RAND() LIMIT 1');
+		$surname = \R::findOne('surname', ' ORDER BY RAND() LIMIT 1');
 		return $surname->surname;
 	}
 	
