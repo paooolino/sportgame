@@ -6,21 +6,24 @@ use PHPUnit\Framework\TestCase;
 use \Paooolino\Sportgame;
 
 class_alias('\RedBeanPHP\R','\R');
-R::setup('mysql:host=localhost;dbname=sportgame_test', 'root', 'root');
+//R::setup('mysql:host=localhost;dbname=sportgame_test', 'root', 'root');
+R::setup('sqlite::memory:');
 
 class AppTest extends TestCase {
+	
+	private $sg;
 	
 	/**
 	 *	inizializza un database con 2 leagues, 20 teams
 	 */
 	protected function setUp() {
 		R::nuke();
-		$sg = new Sportgame();
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'option');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'name');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'surname');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'league');
-		$sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'team');
+		$this->sg = new Sportgame("sqlite");
+		$this->sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'option');
+		$this->sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'name');
+		$this->sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'surname');
+		$this->sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'league');
+		$this->sg->initDbTableFromCsv(dirname(__FILE__) . '/helpers/', 'team');
 	}
 	
 	protected function tearDown() {
@@ -31,9 +34,8 @@ class AppTest extends TestCase {
 	 *	
 	 */
 	public function testUpdatePlayers() {
-		$sg = new SportGame();
-		$sg->initPlayers();
-		$sg->updatePlayers();
+		$this->sg->initPlayers();
+		$this->sg->updatePlayers();
 		
 		$players = R::findAll("player");
 		$variation = R::findOne("playervariation");
@@ -47,8 +49,7 @@ class AppTest extends TestCase {
 	}
 	
 	public function testInitCalendar() {
-		$sg = new SportGame();
-		$sg->initCalendar();
+		$this->sg->initCalendar();
 		$leagues = R::findAll('league');
 		$matches = R::findAll('match');
 		$matches_per_league = 5 * 9;
@@ -56,21 +57,17 @@ class AppTest extends TestCase {
 	}
 	
 	public function testPassTurn() {
-		$sg = new Sportgame();
-		
-		$turnBefore = $sg->getOption("current_turn");
-		$sg->passTurn(1);
-		$turnAfter = $sg->getOption("current_turn");
+		$turnBefore = $this->sg->getOption("current_turn");
+		$this->sg->passTurn(1);
+		$turnAfter = $this->sg->getOption("current_turn");
 		
 		$this->assertEquals(0, $turnBefore, "initial turn value");
 		$this->assertEquals(1, $turnAfter, "turn value after 1 pass");
 	}
 	
 	public function testInitPlayers() {
-		$sg = new SportGame();
-		
 		$teams = R::findAll('team');
-		$sg->initPlayers();
+		$this->sg->initPlayers();
 		$players = R::findAll('player');
 		
 		$this->assertEquals(25 * count($teams), count($players), "every team has 25 players");

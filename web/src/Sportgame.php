@@ -3,6 +3,12 @@ namespace Paooolino;
 
 class Sportgame {
 
+	private $db_type = ""; // mysql | sqlite
+	
+	public function __construct($db_type = "mysql") {
+		$this->db_type = $db_type;
+	}
+	
 	public function initDbTableFromCsv($filepath, $filename) {
 		$file = fopen($filepath . $filename . ".csv", 'r');
 		
@@ -116,12 +122,23 @@ class Sportgame {
 	}
 	
 	private function getRandomName($country) {
-		$name = \R::findOne('name', ' ORDER BY RAND() LIMIT 1');
+		//var_dump($this->db_type);die();
+		if ($this->db_type == "mysql") {
+			$name = \R::findOne('name', ' ORDER BY RAND() LIMIT 1');
+		}
+		if ($this->db_type == "sqlite") {
+			$name = \R::findOne('name', ' ORDER BY RANDOM() LIMIT 1');
+		}
 		return $name->name;
 	}
 	
 	private function getRandomSurname($country) {
-		$surname = \R::findOne('surname', ' ORDER BY RAND() LIMIT 1');
+		if ($this->db_type == "mysql") {
+			$surname = \R::findOne('surname', ' ORDER BY RAND() LIMIT 1');
+		}
+		if ($this->db_type == "sqlite") {
+			$surname = \R::findOne('surname', ' ORDER BY RANDOM() LIMIT 1');
+		}		
 		return $surname->surname;
 	}
 	
