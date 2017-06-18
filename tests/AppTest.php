@@ -35,9 +35,9 @@ class AppTest extends TestCase {
 	 */
 	public function testUpdatePlayers() {
 		$this->sg->initPlayers();
-		$this->sg->updatePlayers();
-		
 		$players = R::findAll("player");
+		
+		$this->sg->updatePlayers();
 		$variation = R::findOne("playervariation");
 
 		if ($variation) {
@@ -71,10 +71,6 @@ class AppTest extends TestCase {
 		$players = R::findAll('player');
 		
 		$this->assertEquals(25 * count($teams), count($players), "every team has 25 players");
-	}
-	
-	public function testUpdatePlayer() {
-		//
 	}
 
 }

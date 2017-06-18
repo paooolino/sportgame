@@ -13,9 +13,6 @@ $config = [];
 // Slim Framework configuration
 $config['displayErrorDetails'] = true;
 $config['addContentLengthHeader'] = false;
-// custom configuration
-// when false, db setup is not permitted
-$config['development_mode'] = true;
 
 $app = new \Slim\App(["settings" => $config]);
 
@@ -28,11 +25,36 @@ $container['sg'] = new \Paooolino\Sportgame();
 
 // routes
 $app->get('/', function (Request $request, Response $response) {
-	$widgets = ["login", "register", "standings", "events"];
-	$response = $this->view->render($response, "./layout.phtml", ["widgets" => $widgets]);
+	$template = ["main_layout"];
+	$widgets = ["header", "homecontent", "footer"];
+	
+	$response = $this->view->render($response, "./layout.phtml", [
+		"widgets" => $widgets
+	]);
 	return $response;
 });
 
+$app->get('/tools/db-setup', function (Request $request, Response $response) {
+	$settings = $this->get("settings");
+	if ($settings["development_mode"]) {
+		R::nuke();
+		$this->sg->initDbTableFromCsv("../dbdata/", "option");
+		$this->sg->initDbTableFromCsv("../dbdata/", "league");
+		$this->sg->initDbTableFromCsv("../dbdata/", "team");
+		$this->sg->initDbTableFromCsv("../dbdata/", "name");
+		$this->sg->initDbTableFromCsv("../dbdata/", "surname");
+		$this->sg->initDbTableFromCsv("../dbdata/", "country");
+		$this->sg->initPlayers();
+		$this->sg->initCalendar();
+	} else {
+		// TO DO send error
+	}
+	return $response;
+});
+
+$app->get('/tools/db-reset', function (Request $request, Response $response) {
+});
+/*
 $app->get('/leagues', function (Request $request, Response $response) {
 	$widgets = ["abstract"];
 	$response = $this->view->render($response, "layout.phtml", ["widgets" => $widgets]);
@@ -56,23 +78,6 @@ $app->get('/player/{player_id}', function (Request $request, Response $response)
 	$response = $this->view->render($response, "layout.phtml", ["widgets" => $widgets]);
 	return $response;
 });
-
-$app->get('/tools/db-setup', function (Request $request, Response $response) {
-	$settings = $this->get("settings");
-	if ($settings["development_mode"]) {
-		R::nuke();
-		$this->sg->initDbTableFromCsv("../dbdata/", "option");
-		$this->sg->initDbTableFromCsv("../dbdata/", "league");
-		$this->sg->initDbTableFromCsv("../dbdata/", "team");
-		$this->sg->initDbTableFromCsv("../dbdata/", "name");
-		$this->sg->initDbTableFromCsv("../dbdata/", "surname");
-		$this->sg->initDbTableFromCsv("../dbdata/", "country");
-		$this->sg->initPlayers();
-		$this->sg->initCalendar();
-	} else {
-		// TO DO send error
-	}
-	return $response;
-});
+*/
 
 $app->run();

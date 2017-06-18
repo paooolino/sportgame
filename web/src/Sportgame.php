@@ -1,7 +1,15 @@
 <?php
 namespace Paooolino;
 
-class Sportgame {
+class SportGame {
+	
+	public function checkdDatabaseIntegrity() {
+		
+	}
+	
+}
+
+class Sportgame_old {
 
 	private $db_type = ""; // mysql | sqlite
 	
@@ -10,6 +18,53 @@ class Sportgame {
 	}
 	
 	public function initDbTableFromCsv($filepath, $filename) {
+		// read the first two lines of the file
+		$file = fopen($filepath . $filename . ".csv", 'r');
+		
+		// the first containing field names
+		$fields = [];
+		// the second containing the first record
+		$record = [];
+		$line = fgetcsv($file);
+		if ($line !== FALSE) {
+			$fields = $line;
+		}
+		$line = fgetcsv($file);
+		if ($line !== FALSE) {
+			$record = $line; 
+		}
+		
+		fclose($file);
+	
+		// create a bean with the first record and field names, stores it creating table schema.
+		$line = \R::dispense($filename);
+		$count = 0;
+		foreach ($fields as $field) {
+			$line->$field = $record[$count];
+			$count++;
+		}
+		\R::store($line);
+		
+		// bulk insert the other records
+		if ($this->db_type == "mysql") {
+			$query = "
+				LOAD DATA LOCAL INFILE '" . __DIR__ . "/../" . $filepath . $filename . ".csv' 
+				INTO TABLE `". $filename ."` 
+				FIELDS TERMINATED BY ',' 
+				OPTIONALLY ENCLOSED BY '\"'
+				LINES TERMINATED BY '\r\n'
+				IGNORE 2 LINES
+			";
+		}
+
+		if ($this->db_type == "sqlite") {
+			// to do
+			//	ex. https://stackoverflow.com/questions/14947916/import-csv-to-sqlite
+		}
+		
+		\R::exec($query);
+		
+		/*
 		$file = fopen($filepath . $filename . ".csv", 'r');
 		
 		$fields = [];
@@ -32,6 +87,7 @@ class Sportgame {
 			}
 			\R::store($line);
 		}
+		*/
 	}
 	
 	public function initPlayers() {

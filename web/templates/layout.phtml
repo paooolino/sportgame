@@ -1,45 +1,12 @@
-<?php
-/*
-	$leagues [] "name", "id"
-	$title
-	$description
-	$widgets [] 
-*/
-?>
 <!doctype html>
 <html>
 <head>
 </head>
 <body>
-	<header>
-		header
-		<nav>
-			<ul>
-				<?php
-				foreach($leagues as $league) { 
-					?>
-					<li><a href="#"><?php echo $league["name"]; ?></a></li>
-					<?php
-				}			
-				?>
-			</ul>
-		</nav>
-	</header>
-	<section>
-		<?php if (isset($title)) { ?>
-			<h1><?php echo $title; ?></h1>
-		<?php } ?>
-		<?php if (isset($description)) { ?>
-			<?php echo $description; ?>
-		<?php } ?>
-	</section>
 	<?php 
 	foreach($widgets as $widget) { 
 		echo $this->fetch("./widgets/" . $widget .".phtml", []);
 	}
 	?>
-	<footer>
-		footer
-	</footer>
 </body>
 </html>
