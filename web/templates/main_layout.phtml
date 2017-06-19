@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+	<div class="container">
+		<?php 
+		foreach($widgets as $widget) { 
+			echo $this->fetch("./widgets/" . $widget .".phtml", []);
+		}
+		?>
+	</div>
+</body>
+</html>

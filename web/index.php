@@ -1,4 +1,19 @@
 <?php
+/**
+ *	index file for the application.
+ *	
+ *	@uses
+ *		\Paooolino\Sportgame
+ *			isDatabasePopulated()
+ *
+ *		templates/main_layout.phtml
+ *		templates/widgets/header.phtml
+ *		templates/widgets/footer.phtml
+ *		templates/widgets/page_home.phtml
+ *		templates/widgets/page_tools.phtml
+ *		templates/widgets/page_tools_dbsetup.phtml
+ *		templates/widgets/page_tools_dbreset.phtml
+ */
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
@@ -19,41 +34,69 @@ $app = new \Slim\App(["settings" => $config]);
 // php renderer
 $container = $app->getContainer();
 $container['view'] = new \Slim\Views\PhpRenderer("./templates/");
+// router to be used in php-view templates
+$container['view']->addAttribute('router', $container->get('router'));
 
 // Sportgame application
 $container['sg'] = new \Paooolino\Sportgame();
 
 // routes
 $app->get('/', function (Request $request, Response $response) {
-	$template = ["main_layout"];
-	$widgets = ["header", "homecontent", "footer"];
+	$template_name = "main_layout";
+	$widgets = ["header", "page_home", "footer"];
 	
-	$response = $this->view->render($response, "./layout.phtml", [
-		"widgets" => $widgets
+	$response = $this->view->render($response, "./" . $template_name . ".phtml", [
+		"widgets" => $widgets,
+		// you can pass any other data to the template file here
+		// ...
 	]);
 	return $response;
-});
+})->setName('home');
+
+$app->get('/tools', function (Request $request, Response $response) {
+	$template_name = "main_layout";
+	$widgets = ["header", "page_tools", "footer"];
+	
+	$response = $this->view->render($response, "./" . $template_name . ".phtml", [
+		"widgets" => $widgets,
+	]);
+	return $response;	
+})->setName('tools');
 
 $app->get('/tools/db-setup', function (Request $request, Response $response) {
-	$settings = $this->get("settings");
-	if ($settings["development_mode"]) {
+	$template_name = "main_layout";
+	$widgets = ["header", "page_tools_dbsetup", "footer"];
+	
+	$isDatabasePopulated = false;
+	if (!$this->sg->isDatabasePopulated()) {
 		R::nuke();
-		$this->sg->initDbTableFromCsv("../dbdata/", "option");
-		$this->sg->initDbTableFromCsv("../dbdata/", "league");
-		$this->sg->initDbTableFromCsv("../dbdata/", "team");
 		$this->sg->initDbTableFromCsv("../dbdata/", "name");
 		$this->sg->initDbTableFromCsv("../dbdata/", "surname");
-		$this->sg->initDbTableFromCsv("../dbdata/", "country");
-		$this->sg->initPlayers();
-		$this->sg->initCalendar();
-	} else {
-		// TO DO send error
+		$this->sg->initDbTableFromCsv("../dbdata/", "league");
+		$this->sg->initDbTableFromCsv("../dbdata/", "team");
+		$this->sg->initDbTableFromCsv("../dbdata/", "option");
+		$isDatabasePopulated = true;
 	}
-	return $response;
-});
+	
+	$response = $this->view->render($response, "./" . $template_name . ".phtml", [
+		"widgets" => $widgets,
+		"isDatabasePopulated" => $isDatabasePopulated
+	]);
+	return $response;	
+})->setName('dbsetup');
 
 $app->get('/tools/db-reset', function (Request $request, Response $response) {
-});
+	$template_name = "main_layout";
+	$widgets = ["header", "page_tools_dbreset", "footer"];
+	
+	R::nuke();
+	
+	$response = $this->view->render($response, "./" . $template_name . ".phtml", [
+		"widgets" => $widgets,
+	]);
+	return $response;	
+})->setName('dbreset');
+
 /*
 $app->get('/leagues', function (Request $request, Response $response) {
 	$widgets = ["abstract"];

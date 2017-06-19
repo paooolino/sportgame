@@ -3,8 +3,8 @@ namespace Paooolino;
 
 class SportGame {
 	
-	public function checkdDatabaseIntegrity() {
-		
+	public function isDatabasePopulated() {
+		// to do
 	}
 	
 }
